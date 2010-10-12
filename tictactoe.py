@@ -1,8 +1,5 @@
 import string, sys
 
-#move list for testing purposes
-#moves = ["X", " ", "O", "O", "X", "X", " ", "X", "O"]
-
 #game vars
 BOARD_HORIZ = "-------------\n"
 BOARD_VERT_EMPTY = "|   |   |   |\n"
