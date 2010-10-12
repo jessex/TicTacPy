@@ -135,8 +135,11 @@ def process_result(winner):
         player = "Player 1"
     else:
         player = "Player 2"
-    print "Congratulations %s (%s) on the win!" % (player, winner)
-    print "%s has now won %s game(s) in this session!" %(winner, current)
+    if winner == "D":
+        print "It's a draw! There have been %s draw(s) in this session!" % (current)
+    else:
+        print "Congratulations %s (%s) on the win!" % (player, winner)
+        print "%s has now won %s game(s) in this session!" % (winner, current)
         
     
 #reset game variables for a new match
