@@ -14,9 +14,6 @@ game_type = 2 #1 -> 1 player (Human v Comp), 2 -> 2 players (Human v Human)
 games_played = 0.0
 results = []
 
-prompt = " > "
-
-
 
 """     ***************     DRAWING FUNCTIONS     ***************     """
 
@@ -87,7 +84,7 @@ def get_board_nums(num):
 def prompt_main():
     while True:
         try:
-            choice = int(raw_input(prompt))
+            choice = int(raw_input(" > "))
         except ValueError: #if users enter a non-integer
             print "Please enter a valid choice (1-5)"
             continue
@@ -207,7 +204,7 @@ def game_loop():
     global active_player
     active_player = starting_player
     finished = False
-    #takes care of processing for one full turn
+    #takes care of processing for one full game
     while not(finished):
         draw_board(moves)
         flag = False
