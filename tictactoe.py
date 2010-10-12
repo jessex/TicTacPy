@@ -4,8 +4,8 @@ import string, sys
 #moves = ["X", " ", "O", "O", "X", "X", " ", "X", "O"]
 
 #game vars
-board_horiz = "-------------\n"
-board_vert_empty = "|   |   |   |\n"
+BOARD_HORIZ = "-------------\n"
+BOARD_VERT_EMPTY = "|   |   |   |\n"
 moves = [" ", " ", " ", " ", " ", " ", " ", " ", " "] #chars at each square
 starting_player = "X" #X is default starting player
 active_player = "X"
@@ -52,26 +52,37 @@ def draw_stats():
         elif result == "D":
             draws += 1.0
     #calculate percentages
-    x_per = '%.2f' % (x_wins / games_played)
-    o_per = '%.2f' % (o_wins / games_played)
-    d_per = '%.2f' % (draws / games_played)
+    x_per = '%.2f' % ((x_wins / games_played) * 100)
+    o_per = '%.2f' % ((o_wins / games_played) * 100)
+    d_per = '%.2f' % ((draws / games_played) * 100)
     res = "=====Session Statistics=====\n"
     res += "Games: %s\n" % games_played
-    res += "X wins: %s , %s\n" % (x_wins, x_per)
-    res += "O wins: %s , %s\n" % (o_wins, o_per)
-    res += "Draws: %s , %s\n" % (draws, d_per)
+    res += "X wins: %s , %s%%\n" % (x_wins, x_per)
+    res += "O wins: %s , %s%%\n" % (o_wins, o_per)
+    res += "Draws: %s , %s%%\n" % (draws, d_per)
     print res
     
 #print the board in its current state, takes in a list of the current moves
 def draw_board(moves):
-    board = board_horiz
+    board = BOARD_HORIZ
     ite = iter(moves) #iterator over list
     for i in range(1,4):
-        board += board_vert_empty
+        board += get_board_nums(i)
         board += "| " + ite.next() + " | " + ite.next() + " | " + ite.next() + " |\n"
-        board += board_vert_empty
-        board += board_horiz
+        board += BOARD_VERT_EMPTY
+        board += BOARD_HORIZ
     print board
+
+def get_board_nums(num):
+    if num == 1:
+        return "|0  |1  |2  |\n"
+    elif num == 2:
+        return "|3  |4  |5  |\n"
+    elif num == 3:
+        return "|6  |7  |8  |\n"
+    else:
+        return BOARD_VERT_EMPTY
+    
     
 """     ***************     PROCESSING FUNCTIONS     ***************     """
     
@@ -94,7 +105,7 @@ def process_main():
     choice = prompt_main()
     if choice == 1:
         #new game
-        print "new game"
+        game_loop()
     elif choice == 2:
         draw_stats()
         draw_main()
@@ -115,6 +126,8 @@ def process_main():
     
 #process the results of the game and congratulate the winner
 def process_result(winner):
+    global games_played, results
+    x_wins = o_wins = draws = 0
     if winner == "X":
         x_wins += 1
         current = x_wins
@@ -130,6 +143,7 @@ def process_result(winner):
         
     games_played += 1
     results.append(winner)
+    draw_board(moves)
     
     if winner == player_one:
         player = "Player 1"
@@ -140,16 +154,93 @@ def process_result(winner):
     else:
         print "Congratulations %s (%s) on the win!" % (player, winner)
         print "%s has now won %s game(s) in this session!" % (winner, current)
+
+#processes the move of the player and alters the game state accordingly
+def process_turn(move):
+    global active_player
+    moves[move] = active_player
+    #switch whose turn it is
+    if active_player == "X":
+        active_player = "O"
+    elif active_player == "O":
+        active_player = "X"
+
+#checks board to see if game decided yet, returns winner or "N" for not finished
+def check_victory():
+    #check all winning combinations
+    if moves[0] != " ":
+        if moves[0] == moves[1] == moves[2]: #first row
+                return moves[0]
+        if moves[0] == moves[3] == moves[6]: #first col
+                return moves[0]
+        if moves[0] == moves[4] == moves[8]: #left to right diagonal
+                return moves[0]
+                
+    if moves[2] != " ":
+        if moves[2] == moves[5] == moves[8]: #third col
+            return moves[2]
+        if moves[2] == moves[4] == moves[6]: #right to left diagonal
+            return moves[2]
+            
+    if moves[3] == moves[4] == moves[5]: #second row
+        if moves[3] != " ":
+            return moves[3]
+    if moves[6] == moves[7] == moves[8]: #third row
+        if moves[6] != " ":
+            return moves[6]
+    if moves[1] == moves[4] == moves[7]: #second col
+        if moves[1] != " ":
+            return moves[7]
+            
+    #no winner found, so see if table full (draw) or not (unfinished game)
+    for move in moves:
+        if move == " ":
+            return "N" #found a blank, so unfinished
+    return "D" #no blanks but no winner, game is a draw
         
     
 #reset game variables for a new match
 def reset_game():
+    global moves, active_player
     moves = [" ", " ", " ", " ", " ", " ", " ", " ", " "]
     active_player = starting_player
     
 
-
+def game_loop():
+    global active_player
+    active_player = starting_player
+    finished = False
+    #takes care of processing for one full turn
+    while not(finished):
+        draw_board(moves)
+        flag = False
+        while not(flag):
+            try:
+                square = int(raw_input("Pick a square(0-8) or 9 to quit: "))
+            except ValueError: #if users enter a non-integer
+                print "Invalid input"
+                continue
             
+            if not(square < 10 and square > -1):
+                print "Invalid input"
+            else:
+                if square == 9: #chose 9 to quit
+                    print "Quitting current game"
+                    draw_main()
+                    process_main()
+                else: #chose a square (0-8)
+                    if moves[square] != " ":
+                        print "Square is already taken"
+                    else:
+                        flag = True
+        #have a valid pick at this point
+        process_turn(square)
+        game_check = check_victory()
+        if game_check == "X" or game_check == "O" or game_check == "D":
+            process_result(game_check)
+            reset_game()
+            draw_main()
+            process_main()
        
 if __name__ == "__main__":
     draw_main()
