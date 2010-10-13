@@ -1,5 +1,27 @@
 import string, sys, random
 
+
+"""
+Game board for reference's sake
+-------------
+|0  |1  |2  |
+|   |   |   |
+|   |   |   |
+-------------
+|3  |4  |5  |
+|   |   |   |
+|   |   |   |
+-------------
+|6  |7  |8  |
+|   |   |   |
+|   |   |   |
+-------------
+
+Flag options for reference's sake
+
+
+"""
+
 #game vars
 BOARD_HORIZ = "-------------\n"
 BOARD_VERT_EMPTY = "|   |   |   |\n"
@@ -223,7 +245,7 @@ def game_loop():
             else:
                 if square == 9: #chose 9 to quit
                     print "Quitting current game"
-                    reset_game()
+                    game_reset()
                     draw_main()
                     process_main()
                 else: #chose a square (0-8)
@@ -404,7 +426,7 @@ def zero_in_set(moves):
        
        
        
-       
+"""     ***************     MAIN     ***************     """
        
 if __name__ == "__main__":
     draw_main()
