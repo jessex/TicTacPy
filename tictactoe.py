@@ -28,14 +28,14 @@ BOARD_VERT_EMPTY = "|   |   |   |\n"
 moves = [" ", " ", " ", " ", " ", " ", " ", " ", " "] #chars at each square
 starting_player = "X" #X is default starting player
 active_player = "X"
-comp_player = "N" #defaults as Human v Human so No computer player
+comp_player = "O" #defaults as Human v Human so No computer player
 player_one = "X" #player one defaults to X
 player_two = "O" #player two defaults to O
-game_type = 2 #1 -> 1 player (Human v Comp), 2 -> 2 players (Human v Human)
+game_type = 1 #1 -> 1 player (Human v Comp), 2 -> 2 players (Human v Human)
 
 #session vars
 games_played = 0.0
-results = []
+x_wins = o_wins = draws = 0.0
 
 
 """     ***************     DRAWING FUNCTIONS     ***************     """
@@ -56,19 +56,10 @@ def draw_help():
     
 #calculate and print the game results for the current session
 def draw_stats():
+    global x_wins, o_wins_draws
     if games_played == 0.0:
        print "No games have been completed in this session"
        return
-    x_wins = o_wins = draws = 0.0
-    #tally up results from games in current session
-    for result in results:
-        if result == "X":
-            x_wins += 1.0
-        elif result == "O":
-            o_wins += 1.0
-        elif result == "D":
-            draws += 1.0
-    #calculate percentages
     x_per = '%.2f' % ((x_wins / games_played) * 100)
     o_per = '%.2f' % ((o_wins / games_played) * 100)
     d_per = '%.2f' % ((draws / games_played) * 100)
@@ -143,23 +134,22 @@ def process_main():
     
 #process the results of the game and congratulate the winner
 def process_result(winner):
-    global games_played, results
-    x_wins = o_wins = draws = 0
+    global games_played, x_wins, o_wins, draws
     if winner == "X":
-        x_wins += 1
+        x_wins += 1.0
         current = x_wins
     elif winner == "O":
-        o_wins += 1
+        o_wins += 1.0
         current = o_wins
     elif winner == "D":
-        draws += 1
+        draws += 1.0
         current = draws
     else:
         print "We're not really quite sure what just happened"
         return
         
     games_played += 1
-    results.append(winner)
+    #results.append(winner)
     draw_board(moves)
     
     if winner == player_one:
@@ -167,10 +157,10 @@ def process_result(winner):
     else:
         player = "Player 2"
     if winner == "D":
-        print "It's a draw! There have been %s draw(s) in this session!" % (current)
+        print "It's a draw! There have been %s draw(s) in this session!" % int(current)
     else:
         print "Congratulations %s! %s wins!" % (player, winner)
-        print "%s has now won %s game(s) in this session!" % (winner, current)
+        print "%s has now won %s game(s) in this session!" % (winner, int(current))
 
 #processes the move of the player and alters the game state accordingly
 def process_turn(move):
@@ -233,26 +223,31 @@ def game_loop():
     while not(finished):
         draw_board(moves)
         flag = False
-        while not(flag):
-            try:
-                square = int(raw_input("Pick a square(0-8) or 9 to quit\n %s > " % active_player))
-            except ValueError: #if users enter a non-integer
-                print "Invalid input"
-                continue
-            
-            if not(square < 10 and square > -1):
-                print "Invalid input"
-            else:
-                if square == 9: #chose 9 to quit
-                    print "Quitting current game"
-                    game_reset()
-                    draw_main()
-                    process_main()
-                else: #chose a square (0-8)
-                    if moves[square] != " ":
-                        print "Square is already taken"
-                    else:
-                        flag = True
+        #if Human v Comp and it's comp's turn
+        if game_type == 1 and active_player == comp_player:
+            square = comp_move(moves)
+            print "Computer moves to square %s" % square
+        else:
+            while not(flag):
+                try:
+                    square = int(raw_input("Pick a square(0-8) or 9 to quit\n %s > " % active_player))
+                except ValueError: #if users enter a non-integer
+                    print "Invalid input"
+                    continue
+                
+                if not(square < 10 and square > -1):
+                    print "Invalid input"
+                else:
+                    if square == 9: #chose 9 to quit
+                        print "Quitting current game"
+                        game_reset()
+                        draw_main()
+                        process_main()
+                    else: #chose a square (0-8)
+                        if moves[square] != " ":
+                            print "Square is already taken"
+                        else:
+                            flag = True
         #have a valid pick at this point
         process_turn(square)
         game_check = process_finish()
@@ -272,7 +267,7 @@ def comp_move(moves):
     else:
         human_player = "X"
         
-    if not("X" in moves) and not("O" in moves): #move to center if no moves yet
+    if moves[4] == " ": #if center still unoccupied, occupy it
         return 4
     
     possible = can_finish(comp_player, moves)
@@ -289,6 +284,10 @@ def comp_move(moves):
     if possible != -1: #if human can pin, block it
         return possible   
         
+    possible = zero_in_set(moves)
+    if possible != -1: #if comp can pioneer, do it
+        return possible   
+        
     possible = one_in_set(comp_player, moves)
     if possible != -1: #if comp can add, do it
         return possible   
@@ -296,12 +295,6 @@ def comp_move(moves):
     if possible != -1: #if human alone, get next to it
         return possible  
     
-    if moves[4] == " ": #if center still unoccupied, occupy it
-        return 4
-    
-    possible = zero_in_set(moves)
-    if possible != -1: #if comp can pioneer, do it
-        return possible   
         
     #at this stage, pick a random square which is unoccupied and return it
     unoccupied = []
@@ -315,11 +308,11 @@ def can_finish(winner, moves):
     #all rows
     for i in range(0,7):
         if (i % 3) == 0: #first col
-            if player == moves[i] == moves[i+1] and moves[i+2] == " ":
+            if winner == moves[i] == moves[i+1] and moves[i+2] == " ":
                 return i+2
-            elif player == moves[i+1] == moves[i+2] and moves[i] == " ":
+            elif winner == moves[i+1] == moves[i+2] and moves[i] == " ":
                 return i
-            elif player == moves[i] == moves[i+2] and moves[i+1] == " ":
+            elif winner == moves[i] == moves[i+2] and moves[i+1] == " ":
                 return i+1
         
     #all cols
