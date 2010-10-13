@@ -53,7 +53,7 @@ def draw_stats():
     res += "Games: %s\n" % games_played
     res += "X wins: %s , %s%%\n" % (x_wins, x_per)
     res += "O wins: %s , %s%%\n" % (o_wins, o_per)
-    res += "Draws: %s , %s%%\n" % (draws, d_per)
+    res += "Draws: %s , %s%%" % (draws, d_per)
     print res
     
 #print the board in its current state, takes in a list of the current moves
@@ -146,7 +146,7 @@ def process_result(winner):
     if winner == "D":
         print "It's a draw! There have been %s draw(s) in this session!" % (current)
     else:
-        print "Congratulations %s (%s) on the win!" % (player, winner)
+        print "Congratulations %s! %s wins!" % (player, winner)
         print "%s has now won %s game(s) in this session!" % (winner, current)
 
 #processes the move of the player and alters the game state accordingly
@@ -199,7 +199,7 @@ def reset_game():
     moves = [" ", " ", " ", " ", " ", " ", " ", " ", " "]
     active_player = starting_player
     
-
+#control loop of an actual tic tac toe game
 def game_loop():
     global active_player
     active_player = starting_player
@@ -210,7 +210,7 @@ def game_loop():
         flag = False
         while not(flag):
             try:
-                square = int(raw_input("Pick a square(0-8) or 9 to quit: "))
+                square = int(raw_input("Pick a square(0-8) or 9 to quit\n %s > " % active_player))
             except ValueError: #if users enter a non-integer
                 print "Invalid input"
                 continue
@@ -220,6 +220,7 @@ def game_loop():
             else:
                 if square == 9: #chose 9 to quit
                     print "Quitting current game"
+                    reset_game()
                     draw_main()
                     process_main()
                 else: #chose a square (0-8)
@@ -235,6 +236,7 @@ def game_loop():
             reset_game()
             draw_main()
             process_main()
+       
        
 if __name__ == "__main__":
     draw_main()
