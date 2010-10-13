@@ -149,7 +149,6 @@ def process_result(winner):
         return
         
     games_played += 1
-    #results.append(winner)
     draw_board(moves)
     
     if winner == player_one:
