@@ -26,7 +26,7 @@ Flag options for reference's sake
 BOARD_HORIZ = "-------------\n"
 BOARD_VERT_EMPTY = "|   |   |   |\n"
 moves = [" ", " ", " ", " ", " ", " ", " ", " ", " "] #chars at each square
-starting_player = "O" #X is default starting player
+starting_player = "X" #X is default starting player
 active_player = "X"
 comp_player = "O" #defaults as Human v Human so No computer player
 player_one = "X" #player one defaults to X
@@ -456,7 +456,7 @@ def zero_in_set(moves):
     
     return -1
        
-#determines if the ends of an L-shape are in place given board state (-1 or not)
+#determines if the ends of an L-shape are in place given board state (-1 if not)
 def is_l_shape(moves):
     if moves[7] == moves[0] and moves[0] != " " and moves[3] == moves[6] == " ":
         return 6
@@ -469,6 +469,7 @@ def is_l_shape(moves):
         
     return -1
     
+#determines if there is a caddy corner arrangement given board state (-1 if not)
 def is_caddy_corner(moves):
     if moves[1] == moves[3] and moves[0] == " ":
         return 0
