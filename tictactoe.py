@@ -229,7 +229,7 @@ def game_loop():
         else:
             while not(flag):
                 try:
-                    square = int(raw_input("Pick a square(0-8) or 9 to quit\n %s > " % active_player))
+                    square = int(raw_input("Pick a square (0-8) or 9 to quit\n %s > " % active_player))
                 except ValueError: #if users enter a non-integer
                     print "Invalid input"
                     continue
@@ -276,12 +276,20 @@ def comp_move(moves):
     if possible != -1: #if human has a winning move, block it
         return possible
         
+    possible = is_l_shape(moves)
+    if possible != -1: #if comp can exploit or block an L shape, do so
+        return possible
+        
     possible = can_pin(comp_player, moves)
     if possible != -1: #if comp can pin, do it
         return possible
     possible = can_pin(human_player, moves)
     if possible != -1: #if human can pin, block it
         return possible   
+        
+    possible = is_caddy_corner(moves)
+    if possible != -1: #if comp can exploit or block caddy corner, do so
+        return possible
         
     possible = zero_in_set(moves)
     if possible != -1: #if comp can pioneer, do it
@@ -343,13 +351,17 @@ def can_finish(winner, moves):
 #determine if pinner can pin the corners given the board state (-1 if not)
 def can_pin(pinner, moves):
     if pinner == moves[0] == moves[8] and moves[2] == " ":
-        return 2
+        if pinner == comp_player or moves[6] != " ":
+            return 2
     if pinner == moves[0] == moves[8] and moves[6] == " ":
-        return 6
+        if pinner == comp_player or moves[2] != " ":
+            return 6
     if pinner == moves[2] == moves[6] and moves[0] == " ":
-        return 0
+        if pinner == comp_player or moves[8] != " ":
+            return 0
     if pinner == moves[2] == moves[6] and moves[8] == " ":
-        return 8
+        if pinner == comp_player or moves[0] != " ":
+            return 8
         
     return -1
        
@@ -415,7 +427,30 @@ def zero_in_set(moves):
     
     return -1
        
-       
+#determines if the ends of an L-shape are in place given board state (-1 or not)
+def is_l_shape(moves):
+    if moves[7] == moves[0] and moves[0] != " " and moves[3] == moves[6] == " ":
+        return 6
+    if moves[7] == moves[2] and moves[2] != " " and moves[5] == moves[8] == " ":
+        return 8
+    if moves[1] == moves[6] and moves[6] != " " and moves[3] == moves[0] == " ":
+        return 0
+    if moves[1] == moves[8] and moves[8] != " " and moves[5] == moves[2] == " ":
+        return 2
+        
+    return -1
+    
+def is_caddy_corner(moves):
+    if moves[1] == moves[3] and moves[0] == " ":
+        return 0
+    if moves[1] == moves[5] and moves[2] == " ":
+        return 2
+    if moves[7] == moves[3] and moves[6] == " ":
+        return 6
+    if moves[7] == moves[5] and moves[8] == " ":
+        return 8
+        
+    return -1
        
        
 """     ***************     MAIN     ***************     """
