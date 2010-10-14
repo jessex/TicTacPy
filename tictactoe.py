@@ -26,7 +26,7 @@ Flag options for reference's sake
 BOARD_HORIZ = "-------------\n"
 BOARD_VERT_EMPTY = "|   |   |   |\n"
 moves = [" ", " ", " ", " ", " ", " ", " ", " ", " "] #chars at each square
-starting_player = "X" #X is default starting player
+starting_player = "O" #X is default starting player
 active_player = "X"
 comp_player = "O" #defaults as Human v Human so No computer player
 player_one = "X" #player one defaults to X
@@ -276,16 +276,16 @@ def comp_move(moves):
     if possible != -1: #if human has a winning move, block it
         return possible
         
-    possible = is_l_shape(moves)
-    if possible != -1: #if comp can exploit or block an L shape, do so
-        return possible
-        
     possible = can_pin(comp_player, moves)
     if possible != -1: #if comp can pin, do it
         return possible
     possible = can_pin(human_player, moves)
     if possible != -1: #if human can pin, block it
         return possible   
+        
+    possible = is_l_shape(moves)
+    if possible != -1: #if comp can exploit or block an L shape, do so
+        return possible
         
     possible = is_caddy_corner(moves)
     if possible != -1: #if comp can exploit or block caddy corner, do so
@@ -350,20 +350,49 @@ def can_finish(winner, moves):
        
 #determine if pinner can pin the corners given the board state (-1 if not)
 def can_pin(pinner, moves):
+    side = -1
     if pinner == moves[0] == moves[8] and moves[2] == " ":
         if pinner == comp_player or moves[6] != " ":
             return 2
+        else:
+            side = check_sides(moves)
     if pinner == moves[0] == moves[8] and moves[6] == " ":
         if pinner == comp_player or moves[2] != " ":
             return 6
+        else:
+            side = check_sides(moves)
     if pinner == moves[2] == moves[6] and moves[0] == " ":
         if pinner == comp_player or moves[8] != " ":
             return 0
+        else:
+            side = check_sides(moves)
     if pinner == moves[2] == moves[6] and moves[8] == " ":
         if pinner == comp_player or moves[0] != " ":
             return 8
+        else:
+            side = check_sides(moves)
+    
+    if side != -1:
+        return side
+    else:
+        return -1
+    
+#return a random unoccupied side square (non-corner, non-center)
+def check_sides(moves):
+    unoccupied = []
+    if moves[1] == " ":
+        unoccupied.append(1)
+    if moves[3] == " ":
+        unoccupied.append(3)
+    if moves[5] == " ":
+        unoccupied.append(5)
+    if moves[7] == " ":
+        unoccupied.append(7)
         
-    return -1
+    if len(unoccupied) == 0:
+        return -1
+    else:
+        return unoccupied[random.randint(0,len(unoccupied)-1)]
        
 #determine if row/col/dia has 2 empty squares given board state (-1 if not)
 def one_in_set(player, moves):
