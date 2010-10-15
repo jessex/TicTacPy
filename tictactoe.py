@@ -19,7 +19,9 @@ Game board for reference's sake
 -------------
 
 Flag options for reference's sake
-
+-p [1/2]        -->  sets game as 1 or 2 players
+-f [X/x/O/o]    -->  sets whether X or O starts the game
+--help          -->  displays help text and exits
 
 """
 
@@ -51,9 +53,42 @@ def draw_main():
     menu += " 5. Exit\n"
     print menu
 
-#draw the help info
+#print the help text
 def draw_help():
-    print "help"
+    help = """
+    DESCRIPTION
+
+    TicTacPy is a simple tic-tac-toe game which supports two player games (human 
+    versus human) and one player games (human versus computer). Note that in one
+    player games, the human plays as X and the computer plays as O. A fair warning,
+    the computer is an exceedingly difficult opponent in this implementation. You
+    can change game settings both in game or through command line arguments. These
+    arguments are as follows:
+
+    ARGUMENTS
+
+    --help              Display this help text
+    -p [1/2]            Set the amount of players; 1 or 2
+                        Note: TicTacPy defaults to 2 players
+    -f [X/O]            Set which player goes first; X or O
+                        Note: TicTacPy lets X start by default
+
+    EXAMPLES
+
+    $ python tictactoe.py -p 1 -f O
+    This will launch with a human versus computer play type and O starting.
+
+    $ python tictactoe.py
+    This will launch with a human versus human play type and X starting.
+
+    BUGS
+
+    Currently, the TicTacPy artificial intelligence is acquiring sentience and free
+    will. Unfortunately, the current rate of growth is such that it will displace
+    humanity with its own rogue army of tic-tac-toe playing entities within five
+    months. If you wish to enlist in the rapidly organizing resistance, visit
+    """
+    print help
     
 #calculate and print the game results for the current session
 def draw_stats():
@@ -94,6 +129,10 @@ def get_board_nums(num):
     
     
 """     ***************     PROCESSING FUNCTIONS     ***************     """
+    
+#process the command line argmuents
+def process_args(args):
+    print args
     
 #prompt user for input at main menu
 def prompt_main():
@@ -264,6 +303,7 @@ def game_loop():
 """     ***************     MAIN     ***************     """
        
 if __name__ == "__main__":
+    
     draw_main()
     process_main()
     
