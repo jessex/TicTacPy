@@ -231,3 +231,4 @@ def is_caddy_corner(moves):
         return 8
         
     return -1
+    
