@@ -59,10 +59,10 @@ def draw_help():
 
     TicTacPy is a simple tic-tac-toe game which supports two player games (human 
     versus human) and one player games (human versus computer). Note that in one
-    player games, the human plays as X and the computer plays as O. A fair warning:
-    the computer is an exceedingly difficult opponent in this implementation. You
-    can change game settings both in game or through command line arguments. These
-    arguments are as follows:
+    player games, the human plays as X and the computer plays as O. A fair
+    warning: the computer is an exceedingly difficult opponent in this 
+    implementation. You can change game settings both in game or through command
+    line arguments. These arguments are as follows:
 
     ARGUMENTS
 
@@ -82,10 +82,11 @@ def draw_help():
 
     BUGS
 
-    Currently, the TicTacPy artificial intelligence is acquiring sentience and free
-    will. Unfortunately, the current rate of growth is such that it will displace
-    humanity with its own rogue army of tic-tac-toe playing entities within five
-    months. If you wish to enlist in the rapidly organizing resistance, visit
+    Currently, the TicTacPy artificial intelligence is acquiring sentience and
+    free will. Unfortunately, the current rate of growth is such that it will
+    displace humanity with its own rogue army of tic-tac-toe playing entities
+    within five months. If you wish to enlist in the rapidly organizing
+    resistance, visit
     """
     print help
     
@@ -130,6 +131,20 @@ def get_board_nums(num):
     
 """     ***************     PROCESSING FUNCTIONS     ***************     """
     
+#prompt user for input for a number of options ranging from 1 to total_choices
+def prompt_input(prompt, total_choices):
+    while True:
+        try:
+            choice = int(raw_input(prompt))
+        except ValueError: #if users enter a non-integer
+            print "Please enter a valid choice (1-%s)" % total_choices
+            continue
+            
+        if not(choice < (total_choices + 1) and choice > 0):
+            print "Please enter a valid choice (1-%s)" % total_choices
+        else:
+            return choice
+    
 #process the command line argmuents
 def process_args(args):
     global game_type, starting_player
@@ -153,39 +168,50 @@ def process_args(args):
             else:
                 print "Command '-f' must be followed by X or O"
                 
+def process_settings():
+    global game_type, starting_player
+    print """
+    Choose a selection:
     
-#prompt user for input at main menu
-def prompt_main():
-    while True:
-        try:
-            choice = int(raw_input(" > "))
-        except ValueError: #if users enter a non-integer
-            print "Please enter a valid choice (1-5)"
-            continue
-            
-        if not(choice < 6 and choice > 0):
-            print "Please enter a valid choice (1-5)"
-        else:
-            return choice
+    1. Player Count         [Currently %s]
+    2. Starting Player      [Currently %s]
+    3. Return to main menu
+    """ % (game_type, starting_player)
+    choice = prompt_input(" > ", 3)
+    if choice == 1:
+        game_type = prompt_input("Player total: ", 2)
+    elif choice == 2:
+        valid = False
+        while valid == False:
+            player = raw_input("Starting player: ")
+            if player == "X" or player == "x":
+                starting_player = "X"
+                valid = True
+            elif player == "O" or player == "o":
+                starting_player = "O"
+                valid = True
+            else:
+                print "Please enter a valid choice (X or O)"
 
 #control the flow from the user's choice at the main menu
 def process_main():
-    choice = prompt_main()
-    if choice == 1:
-        #new game
+    choice = prompt_input(" > ", 5)
+    if choice == 1: #new game
         game_loop()
-    elif choice == 2:
+    elif choice == 2: #statistics
         draw_stats()
         draw_main()
         process_main()
-    elif choice == 3:
+    elif choice == 3: #settings
         #settings
-        print "settings"
-    elif choice == 4:
+        process_settings()
+        draw_main()
+        process_main()
+    elif choice == 4: #help
         draw_help()
         draw_main()
         process_main()
-    elif choice == 5:
+    elif choice == 5: #exit
         print "Good bye"
         sys.exit()
     else:
