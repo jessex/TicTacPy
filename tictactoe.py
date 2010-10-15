@@ -1,6 +1,6 @@
 import string, sys, random
 import aimodule
-
+from sys import argv
 
 """
 Game board for reference's sake
@@ -19,10 +19,9 @@ Game board for reference's sake
 -------------
 
 Flag options for reference's sake
+--help          -->  displays help text and exits
 -p [1/2]        -->  sets game as 1 or 2 players
 -f [X/x/O/o]    -->  sets whether X or O starts the game
---help          -->  displays help text and exits
-
 """
 
 #game vars
@@ -34,7 +33,7 @@ active_player = "X"
 comp_player = "O" #defaults as Human v Human so No computer player
 player_one = "X" #player one defaults to X
 player_two = "O" #player two defaults to O
-game_type = 1 #1 -> 1 player (Human v Comp), 2 -> 2 players (Human v Human)
+game_type = 2 #1 -> 1 player (Human v Comp), 2 -> 2 players (Human v Human)
 
 #session vars
 games_played = 0.0
@@ -60,7 +59,7 @@ def draw_help():
 
     TicTacPy is a simple tic-tac-toe game which supports two player games (human 
     versus human) and one player games (human versus computer). Note that in one
-    player games, the human plays as X and the computer plays as O. A fair warning,
+    player games, the human plays as X and the computer plays as O. A fair warning:
     the computer is an exceedingly difficult opponent in this implementation. You
     can change game settings both in game or through command line arguments. These
     arguments are as follows:
@@ -117,6 +116,7 @@ def draw_board(moves):
         board += BOARD_HORIZ
     print board
 
+#print the portions of the square showing the square index
 def get_board_nums(num):
     if num == 1:
         return "|0  |1  |2  |\n"
@@ -132,7 +132,27 @@ def get_board_nums(num):
     
 #process the command line argmuents
 def process_args(args):
-    print args
+    global game_type, starting_player
+    del args[0] #remove the script name (tictactoe.py)
+    
+    #iterate through command line arguments
+    for i in range(0,len(args)):
+        if args[i] == "--help": #help command
+            draw_help()
+            sys.exit()
+        elif args[i] == "-p": #game type command
+            if int(args[i+1]) == 1 or int(args[i+1]) == 2: 
+                game_type = int(args[i+1])
+            else:
+                print "Command '-p' must be followed by 1 or 2"
+        elif args[i] == "-f": #starting player command
+            if args[i+1] == "X" or args[i+1] == "x":
+                starting_player = "X"
+            elif args[i+1] == "O" or args[i+1] == "o":
+                starting_player = "O"
+            else:
+                print "Command '-f' must be followed by X or O"
+                
     
 #prompt user for input at main menu
 def prompt_main():
@@ -303,7 +323,7 @@ def game_loop():
 """     ***************     MAIN     ***************     """
        
 if __name__ == "__main__":
-    
+    process_args(argv)
     draw_main()
     process_main()
     
