@@ -168,6 +168,7 @@ def process_args(args):
             else:
                 print "Command '-f' must be followed by X or O"
                 
+#prints the settings menu and controls changes made herein
 def process_settings():
     global game_type, starting_player
     print """
