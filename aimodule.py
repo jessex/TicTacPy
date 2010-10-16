@@ -1,5 +1,25 @@
 import random
 
+"""
+This implementation uses a basic situation-action production system. The system
+looks at the board in its current state only and runs a series of checks. It
+then calculates its best move based on a list of priorities, choosing the move
+which has the highest priority and is "available" to it at that time. The
+priorities are as follows:
+
+P1: Win the game
+P2: Block the opponent from winning
+P3: Occupy the center if still unoccupied
+P4: Pin the corners around the opponent
+P5: Block/negate a pinning attempt
+P6: Begin an L-shape and/or block an L-shape
+P7: Begin a caddy corner and/or block a caddy corner
+P8: Move to a row, column or diagonal which is entirely empty
+P9: Move to a row, column or diagonal which has one square occupied by computer
+P10: Move to a row, column or diagonal which has one square occupied by human
+P11: Move to a random, unoccupied square
+"""
+
 #determines computer's best move using basic situation-action production system
 def comp_move(moves, comp_player):
     if comp_player == "X":
