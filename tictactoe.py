@@ -238,7 +238,7 @@ def process_result(winner):
     games_played += 1
     draw_board(moves)
     
-    if winner == player_one:
+    if winner == starting_player:
         player = "Player 1"
     else:
         player = "Player 2"
