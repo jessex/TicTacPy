@@ -1,0 +1,58 @@
+DESCRIPTION
+
+TicTacPy is a simple tic-tac-toe game which supports two player games (human 
+versus human) and one player games (human versus computer). Note that in one
+player games, the human plays as X and the computer plays as O. A fair
+warning: the computer is an exceedingly difficult opponent in this 
+implementation. You can change game settings both in game or through command
+line arguments. These arguments are as follows:
+
+INSTRUCTIONS
+
+Grab tictactoe.py and aimodule.py and place them in the same directory. The
+tictactoe.py script calls on the aimodule.py for one-player games. Run:
+
+$ python tictactoe.py [arguments]
+
+ARGUMENTS
+
+--help              Display this help text
+-p [1/2]            Set the amount of players; 1 or 2
+                    Note: TicTacPy defaults to 2 players
+-f [X/O]            Set which player goes first; X or O
+                    Note: TicTacPy lets X start by default
+
+EXAMPLES
+
+$ python tictactoe.py -p 1 -f O
+This will launch with a human versus computer play type and O starting.
+
+$ python tictactoe.py
+This will launch with a human versus human play type and X starting.
+
+For actual gameplay, the player(s) take turns entering the number of the square
+that they wish to place their piece in. The game board is printed as such:
+
+-------------
+|0  |1  |2  |
+|   |   |   |   
+|   |   |   |
+-------------
+|3  |4  |5  |
+|   |   |   |
+|   |   |   |
+-------------
+|6  |7  |8  |
+|   |   |   |
+|   |   |   |
+-------------
+
+
+BUGS
+
+Currently, the TicTacPy artificial intelligence is acquiring sentience and
+free will. Unfortunately, the current rate of growth is such that it will
+displace humanity with its own rogue army of tic-tac-toe playing entities
+within five months. If you wish to enlist in the rapidly organizing
+resistance, visit
+
