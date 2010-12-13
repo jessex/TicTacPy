@@ -103,7 +103,7 @@ def draw_stats():
     res += "Games: %s\n" % int(games_played)
     res += "X wins: %s , %s%%\n" % (int(x_wins), x_per)
     res += "O wins: %s , %s%%\n" % (int(o_wins), o_per)
-    res += "Draws: %s , %s%%" % (int(draws), d_per)
+    res += "Draws:  %s , %s%%" % (int(draws), d_per)
     print res
     
 #print the board in its current state, takes in a list of the current moves
